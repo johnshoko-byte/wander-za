@@ -84,7 +84,7 @@ The JavaScript is organized around clear responsibilities:
 Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/wander-za.git
+git clone https://github.com/johnshoko-byte/wander-za.git
 cd wander-za
 ```
 
