@@ -14,7 +14,7 @@ https://wanderza.netlify.app/
 
 ## Preview
 
-<img src="/img/showcase.jpg" alt="Wander.za landing page showcase" width="100%">
+<img src="public/img/showcase.jpg" alt="Wander.za landing page showcase" width="100%">
 
 ## Features
 
