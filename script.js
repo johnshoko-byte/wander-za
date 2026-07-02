@@ -3,6 +3,7 @@ import { SplitText } from "gsap/SplitText";
 import { CustomEase } from "gsap/CustomEase";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+
 gsap.registerPlugin(CustomEase, SplitText, ScrollTrigger);
 document.documentElement.classList.add("js-ready");
 
@@ -434,7 +435,7 @@ const destinations = [
         name: "Cape Town",
         province: "Western Cape",
         description: "Coastlines, Table Mountain, food markets, and iconic city views.",
-        image: "img/cape-town.jpg",
+        image: "/img/cape-town.jpg",
         price: "From R4,999",
         type: "Coastal city",
         mapX: 18.6,
@@ -444,7 +445,7 @@ const destinations = [
         name: "Garden Route",
         province: "Western Cape",
         description: "Forests, lagoons, beaches, and one of South Africa’s best road trips.",
-        image: "img/garden-route.jpg",
+        image: "/img/garden-route.jpg",
         price: "From R4,299",
         type: "Road trip",
         mapX: 32.8,
@@ -454,7 +455,7 @@ const destinations = [
         name: "Durban",
         province: "KwaZulu-Natal",
         description: "Warm beaches, Indian Ocean views, and vibrant local culture.",
-        image: "img/durban.jpg",
+        image: "/img/durban.jpg",
         price: "From R3,299",
         type: "Beach city",
         mapX: 83.1,
@@ -464,7 +465,7 @@ const destinations = [
         name: "Drakensberg",
         province: "KwaZulu-Natal",
         description: "Mountain hikes, waterfalls, fresh air, and peaceful valleys.",
-        image: "img/drakensberg.jpg",
+        image: "/img/drakensberg.jpg",
         price: "From R3,499",
         type: "Mountain escape",
         mapX: 79.9,
@@ -474,7 +475,7 @@ const destinations = [
         name: "Kruger National Park",
         province: "Mpumalanga",
         description: "Wildlife drives, bush lodges, and unforgettable safari routes.",
-        image: "img/kruger.jpg",
+        image: "/img/kruger.jpg",
         price: "From R5,999",
         type: "Safari",
         mapX: 92.1,
@@ -484,7 +485,7 @@ const destinations = [
         name: "Johannesburg",
         province: "Gauteng",
         description: "Museums, nightlife, food spots, and urban South African culture.",
-        image: "img/johannesburg.jpg",
+        image: "/img/johannesburg.jpg",
         price: "From R2,999",
         type: "City break",
         mapX: 69.2,
