@@ -9,12 +9,12 @@ This project was built to demonstrate front-end UI development, responsive layou
 Add your deployed link here:
 
 ```txt
-https://your-live-demo-url.com
+https://wanderza.netlify.app/
 ```
 
 ## Preview
 
-<img src="img/showcase.jpg" alt="Wander.za landing page showcase" width="100%">
+<img src="/img/showcase.jpg" alt="Wander.za landing page showcase" width="100%">
 
 ## Features
 
