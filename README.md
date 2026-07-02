@@ -17,7 +17,7 @@ https://your-live-demo-url.com
 (Showcase:
 
 ```md
-![Wander.za showcase](./img/showcase.png)
+![Wander.za showcase](img/showcase.png)
 ```)
 
 ## Features
