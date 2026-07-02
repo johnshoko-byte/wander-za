@@ -293,59 +293,11 @@ function setupIntroAnimation() {
         3.15
     );
 
-    let introStarted = false;
-
-    function waitForPreloaderImages(maxWait = 800) {
-        const images = Array.from(document.querySelectorAll(".preloader-img img"));
-
-        const imagePromises = images.map((img) => {
-            if (img.complete) return Promise.resolve();
-
-            return new Promise((resolve) => {
-                img.addEventListener("load", resolve, { once: true });
-                img.addEventListener("error", resolve, { once: true });
-            });
-        });
-
-        const timeoutPromise = new Promise((resolve) => {
-            setTimeout(resolve, maxWait);
-        });
-
-        return Promise.race([
-            Promise.all(imagePromises),
-            timeoutPromise,
-        ]);
-    }
-
-    function startIntroAnimation() {
-        if (introStarted) return;
-
-        introStarted = true;
-
-        waitForPreloaderImages().then(() => {
-            tl.play();
-        });
-    }
-
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", startIntroAnimation, { once: true });
+    if (document.readyState === "complete" || document.readyState === "interactive") {
+        tl.play();
     } else {
-        startIntroAnimation();
+        document.addEventListener("DOMContentLoaded", () => tl.play(), { once: true });
     }
-
-    setTimeout(() => {
-        if (!document.documentElement.classList.contains("site-ready")) {
-            document.documentElement.classList.add("site-ready");
-            document.body.classList.remove("is-loading");
-
-            const preloader = document.querySelector(".preloader");
-            if (preloader) {
-                preloader.style.display = "none";
-            }
-
-            console.warn("Preloader fallback triggered. Check for script or asset errors.");
-        }
-    }, 5000);
 }
 
 function setupMobileMenu() {
