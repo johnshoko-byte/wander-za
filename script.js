@@ -10,7 +10,7 @@ document.documentElement.classList.add("js-ready");
 CustomEase.create("hop", "0.8, 0, 0.2, 1");
 CustomEase.create("hop2", "0.9, 0, 0.1, 1");
 
-const prefersReducedMotion = false;
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const header = document.querySelector(".header");
 const menuToggle = document.querySelector(".menu-toggle");
 const searchForm = document.querySelector("#searchForm");
@@ -434,16 +434,6 @@ searchResults.addEventListener("click", (event) => {
     selectDestination(button.dataset.destination);
 });
 
-searchForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-
-    const matches = getDestinationMatches(searchInput.value);
-
-    if (matches.length > 0) {
-        selectDestination(matches[0].name);
-    }
-});
-
 document.addEventListener("click", (event) => {
     const clickedInsideSearch = event.target.closest(".search-area");
 
@@ -452,9 +442,6 @@ document.addEventListener("click", (event) => {
     }
 });
 
-searchButton.addEventListener("click", () => {
-    searchInput.focus();
-});
 function setupScrollReveals() {
     if (prefersReducedMotion) return;
 
