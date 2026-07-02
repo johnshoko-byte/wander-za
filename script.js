@@ -113,47 +113,56 @@ function setupIntroAnimation() {
         return;
     }
 
+    // Main timeline
     const tl = gsap.timeline({
         paused: true,
-        delay: 0.35,
-        defaults: { overwrite: "auto" },
+        delay: 0.15,
+        defaults: {
+            overwrite: "auto",
+        },
     });
 
+    // Images appear
     tl.to(".preloader-img", {
         scale: 1,
         clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
-        duration: 1,
+        duration: 0.8,
         ease: "hop",
-        stagger: 0.2,
+        stagger: 0.11,
     });
 
     tl.to(
         ".preloader-img img",
         {
             scale: 1,
-            duration: 1,
+            duration: 0.8,
             ease: "hop",
-            stagger: 0.2,
+            stagger: 0.11,
         },
         "<"
     );
 
+    // Preloader title appears
     tl.to(
         ".preloader-header .char",
         {
             yPercent: 0,
-            duration: 1,
+            duration: 0.8,
             ease: "hop2",
-            stagger: { each: 0.125, from: "random" },
+            stagger: {
+                each: 0.075,
+                from: "random",
+            },
         },
-        "0.35"
+        0.25
     );
 
+    // Counter appears and counts up
     tl.to(
         ".preloader-counter p",
         {
             yPercent: 0,
-            duration: 1,
+            duration: 0.6,
             ease: "hop2",
             onStart: () => {
                 const counterEl = document.querySelector(".preloader-counter p");
@@ -161,87 +170,139 @@ function setupIntroAnimation() {
 
                 gsap.to(counter, {
                     value: 100,
-                    duration: 2,
-                    delay: 0.5,
-                    ease: "power2.inOut",
+                    duration: 1.45,
+                    ease: "power2.out",
                     onUpdate: () => {
-                        if (!counterEl) return;
                         counterEl.textContent = String(Math.round(counter.value)).padStart(3, "0");
                     },
                 });
             },
         },
+        0.25
+    );
+
+    // Counter leaves
+    tl.to(
+        ".preloader-counter p",
+        {
+            yPercent: -100,
+            duration: 0.5,
+            ease: "hop2",
+        },
+        1.75
+    );
+
+    // Preloader title leaves
+    tl.to(
+        ".preloader-header .char",
+        {
+            yPercent: -100,
+            duration: 0.6,
+            ease: "hop2",
+            stagger: {
+                each: 0.055,
+                from: "random",
+            },
+        },
+        1.75
+    );
+
+    // Images leave
+    tl.to(
+        ".preloader-img",
+        {
+            scale: 0.001,
+            clipPath: "polygon(20% 20%, 80% 20%, 80% 80%, 20% 80%)",
+            duration: 0.65,
+            ease: "hop2",
+            stagger: -0.055,
+        },
+        2.0
+    );
+
+    tl.to(
+        ".preloader-img img",
+        {
+            scale: 1.04,
+            duration: 0.65,
+            ease: "hop2",
+            stagger: -0.055,
+        },
         "<"
     );
 
-    tl.to(".preloader-counter p", {
-        yPercent: -100,
-        duration: 0.75,
-        ease: "hop2",
-    }, 3.25);
+    // Preloader exits
+    tl.to(
+        ".preloader",
+        {
+            yPercent: -100,
+            duration: 0.7,
+            ease: "hop2",
+            onComplete: () => {
+                document.documentElement.classList.add("site-ready");
 
-    tl.to(".preloader-header .char", {
-        yPercent: -100,
-        duration: 0.75,
-        ease: "hop2",
-        stagger: { each: 0.125, from: "random" },
-    }, 3.25);
+                gsap.set(".preloader", {
+                    display: "none",
+                });
 
-    tl.to(".preloader-img", {
-        scale: 0.001,
-        clipPath: "polygon(20% 20%, 80% 20%, 80% 80%, 20% 80%)",
-        duration: 1,
-        ease: "hop2",
-        stagger: -0.075,
-    }, 3.5);
+                document.body.classList.remove("is-loading");
+            },
+        },
+        2.7
+    );
 
-    tl.to(".preloader-img img", {
-        scale: 1.04,
-        duration: 1,
-        ease: "hop2",
-        stagger: -0.075,
-    }, "<");
+    // Hero title appears after preloader is mostly gone
+    tl.to(
+        ".sandwich-text .char",
+        {
+            yPercent: 0,
+            duration: 1,
+            ease: "hop2",
+            stagger: {
+                each: 0.065,
+                from: "random",
+            },
+        },
+        3.15
+    );
 
-    // Transform is smoother than animating the whole overlay with clip-path.
-    tl.to(".preloader", {
-        yPercent: -100,
-        duration: 0.8,
-        ease: "hop2",
-        onComplete: finishPreloader,
-    }, 4.65);
+    tl.to(
+        ".sandwich-logo",
+        {
+            autoAlpha: 1,
+            scale: 1,
+            duration: 0.7,
+            ease: "power3.out",
+        },
+        3.3
+    );
 
-    tl.to(".sandwich-text .char", {
-        yPercent: 0,
-        duration: 1,
-        ease: "hop2",
-        stagger: { each: 0.075, from: "random" },
-    }, 5.25);
+    tl.to(
+        ".sandwich-front-text",
+        {
+            autoAlpha: 1,
+            y: 0,
+            duration: 0.75,
+            ease: "power3.out",
+        },
+        3.45
+    );
 
-    tl.to(".sandwich-logo", {
-        autoAlpha: 1,
-        scale: 1,
-        duration: 0.8,
-        ease: "power3.out",
-    }, 5.35);
+    tl.to(
+        "nav a .word",
+        {
+            yPercent: 0,
+            duration: 0.85,
+            ease: "hop",
+            stagger: 0.055,
+        },
+        3.15
+    );
 
-    tl.to(".sandwich-front-text", {
-        autoAlpha: 1,
-        y: 0,
-        duration: 0.8,
-        ease: "power3.out",
-    }, 5.5);
-
-    tl.to("nav a .word", {
-        yPercent: 0,
-        duration: 1,
-        ease: "hop",
-        stagger: 0.075,
-    }, 5.25);
-
-    if (document.readyState === "complete") {
+    if (document.readyState === "complete" || document.readyState === "interactive") {
         tl.play();
     } else {
-        window.addEventListener("load", () => tl.play(), { once: true });
+        document.addEventListener("DOMContentLoaded", () => tl.play(), { once: true });
     }
 }
 
