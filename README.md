@@ -14,7 +14,7 @@ https://your-live-demo-url.com
 
 ## Preview
 
-<img src="img/showcase.png" alt="Wander.za landing page showcase" width="100%">
+<img src="img/showcase.jpg" alt="Wander.za landing page showcase" width="100%">
 
 ## Features
 
