@@ -4,306 +4,431 @@ import { CustomEase } from "gsap/CustomEase";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(CustomEase, SplitText, ScrollTrigger);
+document.documentElement.classList.add("js-ready");
 
 CustomEase.create("hop", "0.8, 0, 0.2, 1");
 CustomEase.create("hop2", "0.9, 0, 0.1, 1");
 
-// Stop page scrolling while preloader is active
-document.body.classList.add("is-loading");
+const prefersReducedMotion = false;
+const header = document.querySelector(".header");
+const menuToggle = document.querySelector(".menu-toggle");
+const searchForm = document.querySelector("#searchForm");
+const searchInput = document.querySelector("#searchQuery");
+const searchButton = document.querySelector(".search-icon-btn");
+const preloader = document.querySelector(".preloader");
+const destinationCards = document.querySelector("#destinationCards");
+const nextDestinationBtn = document.querySelector(".destination-arrow.next");
+const prevDestinationBtn = document.querySelector(".destination-arrow.prev");
+const mapMarker = document.querySelector(".map-marker");
+const activeDestinationName = document.querySelector("#activeDestinationName");
+const tripForm = document.querySelector("#tripForm");
+const formStatus = document.querySelector("#formStatus");
+const searchResults = document.querySelector("#searchResults");
 
 const splitText = (selector, type, className, mask = true) => {
+    const element = document.querySelector(selector);
+
+    if (!element) return null;
+
     return SplitText.create(selector, {
-        type: type,
+        type,
         [`${type}Class`]: className,
         ...(mask && { mask: type }),
     });
 };
 
-// Split text
-const preloaderHeaderSplit = splitText(".preloader-header h1", "chars", "char");
-const navSplit = splitText("nav a", "words", "word");
-const headingSplit = splitText(".sandwich-text", "chars", "char", false);
+function lockPage() {
+    document.body.classList.add("is-loading");
+}
 
-// Make split text animatable
-gsap.set(".preloader-header .char, .sandwich-text .char, nav a .word", {
-    display: "inline-block",
-});
+function unlockPage() {
+    document.body.classList.remove("is-loading");
+}
 
-// Starting positions for text animations
-gsap.set(".preloader-header .char", {
-    yPercent: 100,
-});
+function finishPreloader() {
+    if (preloader) {
+        gsap.set(preloader, { display: "none" });
+    }
 
-gsap.set(".preloader-counter p", {
-    yPercent: 100,
-});
+    unlockPage();
+}
 
-gsap.set("nav a .word", {
-    yPercent: 100,
-});
+function setupIntroAnimation() {
+    lockPage();
 
-gsap.set(".sandwich-text .char", {
-    yPercent: 100,
-});
+    const preloaderHeaderSplit = splitText(".preloader-header h1", "chars", "char");
+    const navSplit = splitText("nav a", "words", "word");
+    const headingSplit = splitText(".sandwich-text", "chars", "char", false);
 
-gsap.set(".sandwich-logo", {
-    autoAlpha: 0,
-    scale: 0.92,
-});
+    gsap.set(".preloader-header h1, .preloader-counter p", {
+        autoAlpha: 1,
+    });
 
-gsap.set(".sandwich-front-text", {
-    autoAlpha: 0,
-    y: 20,
-});
+    gsap.set(".preloader-header .char, .sandwich-text .char, nav a .word", {
+        display: "inline-block",
+    });
 
-// Old preloader image animation setup
-const preloaderImgInitRotation = [7.5, -2.5, -10, 12.5, -5, 5];
+    gsap.set(".preloader-header .char", { yPercent: 100 });
+    gsap.set(".preloader-counter p", { yPercent: 100 });
+    gsap.set("nav a .word", { yPercent: 100 });
+    gsap.set(".sandwich-text .char", { yPercent: 100 });
 
-gsap.set(".preloader-img", {
-    xPercent: -50,
-    yPercent: -50,
-    scale: 0.001, // safer than 0, prevents transform snapping
-    autoAlpha: 1,
-    clipPath: "polygon(20% 20%, 80% 20%, 80% 80%, 20% 80%)",
-    rotate: (i) => preloaderImgInitRotation[i],
-    transformOrigin: "50% 50%",
-    force3D: true,
-});
+    gsap.set(".sandwich-logo", {
+        autoAlpha: 0,
+        scale: 0.92,
+    });
 
-gsap.set(".preloader-img img", {
-    scale: 1.04,
-    transformOrigin: "50% 50%",
-    force3D: true,
-});
+    gsap.set(".sandwich-front-text", {
+        autoAlpha: 0,
+        y: 20,
+    });
 
-// Main timeline
-const tl = gsap.timeline({
-    paused: true,
-    delay: 0.5,
-    defaults: {
-        overwrite: "auto",
-    },
-});
+    const preloaderImgInitRotation = [7.5, -2.5, -10, 12.5, -5, 5];
 
-// OLD IMAGE ENTER ANIMATION BROUGHT BACK
-tl.to(".preloader-img", {
-    scale: 1,
-    clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
-    duration: 1,
-    ease: "hop",
-    stagger: 0.2,
-});
+    gsap.set(".preloader-img", {
+        xPercent: -50,
+        yPercent: -50,
+        scale: 0.001,
+        autoAlpha: 1,
+        clipPath: "polygon(20% 20%, 80% 20%, 80% 80%, 20% 80%)",
+        rotate: (i) => preloaderImgInitRotation[i],
+        transformOrigin: "50% 50%",
+        force3D: true,
+    });
 
-// Tiny inner image settle, keeps it feeling smoother
-tl.to(
-    ".preloader-img img",
-    {
+    gsap.set(".preloader-img img", {
+        scale: 1.04,
+        transformOrigin: "50% 50%",
+        force3D: true,
+    });
+
+    if (prefersReducedMotion) {
+        gsap.set(".sandwich-text .char, nav a .word", { yPercent: 0 });
+        gsap.set(".sandwich-logo, .sandwich-front-text", { autoAlpha: 1, scale: 1, y: 0 });
+        finishPreloader();
+        preloaderHeaderSplit?.revert?.();
+        navSplit?.revert?.();
+        headingSplit?.revert?.();
+        return;
+    }
+
+    const tl = gsap.timeline({
+        paused: true,
+        delay: 0.35,
+        defaults: { overwrite: "auto" },
+    });
+
+    tl.to(".preloader-img", {
         scale: 1,
+        clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
         duration: 1,
         ease: "hop",
         stagger: 0.2,
-    },
-    "<"
-);
+    });
 
-// Preloader title comes in
-tl.to(
-    ".preloader-header .char",
-    {
-        yPercent: 0,
-        duration: 1,
-        ease: "hop2",
-        stagger: {
-            each: 0.125,
-            from: "random",
+    tl.to(
+        ".preloader-img img",
+        {
+            scale: 1,
+            duration: 1,
+            ease: "hop",
+            stagger: 0.2,
         },
-    },
-    "0.35"
-);
+        "<"
+    );
 
-// Counter comes in and counts up
-tl.to(
-    ".preloader-counter p",
-    {
-        yPercent: 0,
-        duration: 1,
-        ease: "hop2",
-        onStart: () => {
-            const counterEl = document.querySelector(".preloader-counter p");
-            const counter = { value: 0 };
-
-            gsap.to(counter, {
-                value: 100,
-                duration: 2,
-                delay: 0.5,
-                ease: "power2.inOut",
-                onUpdate: () => {
-                    counterEl.textContent = String(Math.round(counter.value)).padStart(3, "0");
-                },
-            });
+    tl.to(
+        ".preloader-header .char",
+        {
+            yPercent: 0,
+            duration: 1,
+            ease: "hop2",
+            stagger: { each: 0.125, from: "random" },
         },
-    },
-    "<"
-);
+        "0.35"
+    );
 
-// Counter leaves
-tl.to(
-    ".preloader-counter p",
-    {
+    tl.to(
+        ".preloader-counter p",
+        {
+            yPercent: 0,
+            duration: 1,
+            ease: "hop2",
+            onStart: () => {
+                const counterEl = document.querySelector(".preloader-counter p");
+                const counter = { value: 0 };
+
+                gsap.to(counter, {
+                    value: 100,
+                    duration: 2,
+                    delay: 0.5,
+                    ease: "power2.inOut",
+                    onUpdate: () => {
+                        if (!counterEl) return;
+                        counterEl.textContent = String(Math.round(counter.value)).padStart(3, "0");
+                    },
+                });
+            },
+        },
+        "<"
+    );
+
+    tl.to(".preloader-counter p", {
         yPercent: -100,
         duration: 0.75,
         ease: "hop2",
-    },
-    3.25
-);
+    }, 3.25);
 
-// Preloader title leaves
-tl.to(
-    ".preloader-header .char",
-    {
+    tl.to(".preloader-header .char", {
         yPercent: -100,
         duration: 0.75,
         ease: "hop2",
-        stagger: {
-            each: 0.125,
-            from: "random",
-        },
-    },
-    3.25
-);
+        stagger: { each: 0.125, from: "random" },
+    }, 3.25);
 
-// OLD IMAGE EXIT ANIMATION BROUGHT BACK
-tl.to(
-    ".preloader-img",
-    {
-        scale: 0.001, // safer than 0
+    tl.to(".preloader-img", {
+        scale: 0.001,
         clipPath: "polygon(20% 20%, 80% 20%, 80% 80%, 20% 80%)",
         duration: 1,
         ease: "hop2",
         stagger: -0.075,
-    },
-    3.5
-);
+    }, 3.5);
 
-tl.to(
-    ".preloader-img img",
-    {
+    tl.to(".preloader-img img", {
         scale: 1.04,
         duration: 1,
         ease: "hop2",
         stagger: -0.075,
-    },
-    "<"
-);
+    }, "<");
 
-tl.to(
-    ".preloader",
-    {
-        clipPath: "polygon(0 0, 100% 0, 100% 0, 0 0)",
+    // Transform is smoother than animating the whole overlay with clip-path.
+    tl.to(".preloader", {
+        yPercent: -100,
         duration: 0.8,
         ease: "hop2",
-        onComplete: () => {
-            gsap.set(".preloader", {
-                display: "none",
-            });
+        onComplete: finishPreloader,
+    }, 4.65);
 
-            document.body.classList.remove("is-loading");
-        },
-    },
-    4.65
-);
-
-tl.to(
-    ".sandwich-text .char",
-    {
+    tl.to(".sandwich-text .char", {
         yPercent: 0,
         duration: 1,
         ease: "hop2",
-        stagger: {
-            each: 0.075,
-            from: "random",
-        },
-    },
-    5.35
-);
+        stagger: { each: 0.075, from: "random" },
+    }, 5.25);
 
-tl.to(
-    ".sandwich-logo",
-    {
+    tl.to(".sandwich-logo", {
         autoAlpha: 1,
         scale: 1,
         duration: 0.8,
         ease: "power3.out",
-    },
-    5.45
-);
+    }, 5.35);
 
-tl.to(
-    ".sandwich-front-text",
-    {
+    tl.to(".sandwich-front-text", {
         autoAlpha: 1,
         y: 0,
         duration: 0.8,
         ease: "power3.out",
-    },
-    5.6
-);
+    }, 5.5);
 
-tl.to(
-    "nav a .word",
-    {
+    tl.to("nav a .word", {
         yPercent: 0,
         duration: 1,
         ease: "hop",
         stagger: 0.075,
-    },
-    5.35
-);
-gsap.set(".features-section .info, .features-section .stat, .features-section .card", {
-    autoAlpha: 0,
-    y: 40,
+    }, 5.25);
+
+    if (document.readyState === "complete") {
+        tl.play();
+    } else {
+        window.addEventListener("load", () => tl.play(), { once: true });
+    }
+}
+
+function setupMobileMenu() {
+    if (!menuToggle || !header) return;
+
+    menuToggle.addEventListener("click", () => {
+        const isOpen = header.classList.toggle("is-menu-open");
+        menuToggle.setAttribute("aria-expanded", String(isOpen));
+        menuToggle.setAttribute("aria-label", isOpen ? "Close menu" : "Open menu");
+    });
+
+    document.querySelectorAll("#primary-navigation a").forEach((link) => {
+        link.addEventListener("click", () => {
+            header.classList.remove("is-menu-open");
+            menuToggle.setAttribute("aria-expanded", "false");
+            menuToggle.setAttribute("aria-label", "Open menu");
+        });
+    });
+}
+
+function setupSearch() {
+    if (!searchForm || !searchInput) return;
+
+    searchForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const query = searchInput.value.trim().toLowerCase();
+        if (!query) return;
+
+        const matchIndex = destinations.findIndex((destination) => {
+            return [destination.name, destination.province, destination.type]
+                .join(" ")
+                .toLowerCase()
+                .includes(query);
+        });
+
+        if (matchIndex >= 0) {
+            currentDestinationIndex = matchIndex;
+            renderDestinations("next");
+            document.querySelector("#destinations")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        } else {
+            searchInput.setCustomValidity("No matching destination yet. Try Cape Town, Durban, Kruger, or Garden Route.");
+            searchInput.reportValidity();
+            window.setTimeout(() => searchInput.setCustomValidity(""), 1800);
+        }
+    });
+
+    searchButton?.addEventListener("click", () => {
+        if (window.innerWidth <= 768) {
+            searchForm.classList.toggle("is-open");
+            searchInput.focus();
+            return;
+        }
+
+        searchForm.requestSubmit();
+    });
+}
+
+function getDestinationMatches(query) {
+    const cleanQuery = query.trim().toLowerCase();
+
+    if (!cleanQuery) return [];
+
+    return destinations.filter((destination) => {
+        return (
+            destination.name.toLowerCase().includes(cleanQuery) ||
+            destination.province.toLowerCase().includes(cleanQuery) ||
+            destination.type.toLowerCase().includes(cleanQuery) ||
+            destination.description.toLowerCase().includes(cleanQuery)
+        );
+    });
+}
+
+function selectDestination(destinationName) {
+    const foundIndex = destinations.findIndex((destination) => {
+        return destination.name === destinationName;
+    });
+
+    if (foundIndex === -1) return;
+
+    currentDestinationIndex = foundIndex;
+    renderDestinations();
+
+    document.querySelector("#destinations").scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+    });
+
+    searchInput.value = "";
+    searchResults.classList.remove("is-open");
+    searchResults.innerHTML = "";
+}
+
+function renderSearchResults() {
+    const query = searchInput.value;
+    const matches = getDestinationMatches(query).slice(0, 4);
+
+    if (!query.trim()) {
+        searchResults.classList.remove("is-open");
+        searchResults.innerHTML = "";
+        return;
+    }
+
+    searchResults.classList.add("is-open");
+
+    if (matches.length === 0) {
+        searchResults.innerHTML = `
+            <div class="search-empty">
+                No destination found. Try “Cape Town”, “Safari”, or “Coast”.
+            </div>
+        `;
+        return;
+    }
+
+    searchResults.innerHTML = matches
+        .map((destination) => {
+            return `
+                <button class="search-result-btn" type="button" data-destination="${destination.name}">
+                    ${destination.name}
+                    <small>${destination.province} · ${destination.type}</small>
+                </button>
+            `;
+        })
+        .join("");
+}
+
+searchInput.addEventListener("input", renderSearchResults);
+
+searchResults.addEventListener("click", (event) => {
+    const button = event.target.closest(".search-result-btn");
+
+    if (!button) return;
+
+    selectDestination(button.dataset.destination);
 });
 
-gsap.timeline({
-    scrollTrigger: {
-        trigger: ".features-section",
-        start: "top 72%",
-        once: true,
-    },
-})
-    .to(".features-section .info", {
-        autoAlpha: 1,
-        y: 0,
-        duration: 0.8,
-        ease: "power3.out",
-    })
-    .to(".features-section .stat", {
-        autoAlpha: 1,
-        y: 0,
-        duration: 0.7,
-        ease: "power3.out",
-        stagger: 0.12,
-    }, "-=0.35")
-    .to(".features-section .card", {
-        autoAlpha: 1,
-        y: 0,
-        duration: 0.8,
-        ease: "power3.out",
-        stagger: 0.14,
-    }, "-=0.35");
-// Play only after page assets are loaded.
-// This helps prevent image-size snapping.
-if (document.readyState === "complete") {
-    tl.play();
-} else {
-    window.addEventListener(
-        "load",
-        () => {
-            tl.play();
+searchForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const matches = getDestinationMatches(searchInput.value);
+
+    if (matches.length > 0) {
+        selectDestination(matches[0].name);
+    }
+});
+
+document.addEventListener("click", (event) => {
+    const clickedInsideSearch = event.target.closest(".search-area");
+
+    if (!clickedInsideSearch) {
+        searchResults.classList.remove("is-open");
+    }
+});
+
+searchButton.addEventListener("click", () => {
+    searchInput.focus();
+});
+function setupScrollReveals() {
+    if (prefersReducedMotion) return;
+
+    const revealGroups = [
+        {
+            trigger: ".features-section",
+            targets: ".features-section .info, .features-section .stat, .features-section .card",
         },
-        { once: true }
-    );
+    ];
+
+    revealGroups.forEach(({ trigger, targets }) => {
+        if (!document.querySelector(trigger)) return;
+
+        gsap.set(targets, { autoAlpha: 0, y: 36 });
+
+        gsap.to(targets, {
+            autoAlpha: 1,
+            y: 0,
+            duration: 0.8,
+            ease: "power3.out",
+            stagger: 0.12,
+            scrollTrigger: {
+                trigger,
+                start: "top 76%",
+                once: true,
+            },
+        });
+    });
 }
+
 const destinations = [
     {
         name: "Cape Town",
@@ -367,18 +492,12 @@ const destinations = [
     },
 ];
 
-const destinationCards = document.querySelector("#destinationCards");
-const nextDestinationBtn = document.querySelector(".destination-arrow.next");
-const prevDestinationBtn = document.querySelector(".destination-arrow.prev");
-const mapMarker = document.querySelector(".map-marker");
-const activeDestinationName = document.querySelector("#activeDestinationName");
-
 let currentDestinationIndex = 0;
 
 function getVisibleDestinations() {
     const visible = [];
 
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 3; i += 1) {
         const index = (currentDestinationIndex + i) % destinations.length;
         visible.push(destinations[index]);
     }
@@ -387,11 +506,12 @@ function getVisibleDestinations() {
 }
 
 function renderDestinations(direction = "next") {
+    if (!destinationCards || !mapMarker || !activeDestinationName) return;
+
     const visibleDestinations = getVisibleDestinations();
     const activeDestination = visibleDestinations[0];
 
     activeDestinationName.textContent = activeDestination.name;
-
     mapMarker.style.left = `${activeDestination.mapX}%`;
     mapMarker.style.top = `${activeDestination.mapY}%`;
 
@@ -399,7 +519,7 @@ function renderDestinations(direction = "next") {
         .map((destination) => {
             return `
                 <article class="destination-card">
-                    <img src="${destination.image}" alt="${destination.name}">
+                    <img src="${destination.image}" alt="${destination.name}" loading="lazy" decoding="async">
                     <div class="destination-card-content">
                         <h3>${destination.name}</h3>
                         <p>${destination.description}</p>
@@ -414,7 +534,7 @@ function renderDestinations(direction = "next") {
         })
         .join("");
 
-    if (typeof gsap !== "undefined") {
+    if (!prefersReducedMotion) {
         gsap.fromTo(
             ".destination-card",
             {
@@ -433,17 +553,45 @@ function renderDestinations(direction = "next") {
     }
 }
 
-nextDestinationBtn.addEventListener("click", () => {
-    currentDestinationIndex = (currentDestinationIndex + 1) % destinations.length;
-    renderDestinations("next");
-});
+function setupDestinationControls() {
+    nextDestinationBtn?.addEventListener("click", () => {
+        currentDestinationIndex = (currentDestinationIndex + 1) % destinations.length;
+        renderDestinations("next");
+    });
 
-prevDestinationBtn.addEventListener("click", () => {
-    currentDestinationIndex =
-        (currentDestinationIndex - 1 + destinations.length) % destinations.length;
+    prevDestinationBtn?.addEventListener("click", () => {
+        currentDestinationIndex = (currentDestinationIndex - 1 + destinations.length) % destinations.length;
+        renderDestinations("prev");
+    });
+}
 
-    renderDestinations("prev");
-});
+function setupTripForm() {
+    if (!tripForm || !formStatus) return;
 
+    tripForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const formData = new FormData(tripForm);
+        const name = String(formData.get("name") || "").trim();
+        const email = String(formData.get("email") || "").trim();
+        const destination = String(formData.get("destination") || "").trim();
+
+        if (!name || !email || !destination) {
+            formStatus.textContent = "Please complete your name, email, and destination.";
+            formStatus.classList.add("is-error");
+            return;
+        }
+
+        formStatus.classList.remove("is-error");
+        formStatus.textContent = `Thanks, ${name}. We'll be in touch about your trip to ${destination}!`;
+        tripForm.reset();
+    });
+}
+
+setupIntroAnimation();
 renderDestinations();
-const mapInner = document.querySelector(".sa-map-inner");
+setupDestinationControls();
+setupMobileMenu();
+setupSearch();
+setupScrollReveals();
+setupTripForm();

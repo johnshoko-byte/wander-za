@@ -4,11 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wander</title>
+    <title>Wander.za | Curated South African Travel</title>
+    <meta name="description"
+        content="Explore curated South African destinations, local travel routes, and guided trip planning with Wander.za.">
+    <link rel="preload" as="image" href="img/background.png">
+    <link rel="preload" as="image" href="img/subject.png">
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body class="is-loading">
+    <a class="skip-link" href="#main-content">Skip to main content</a>
     <div class="preloader" aria-hidden="true">
         <div class="preloader-images">
             <div class="preloader-img"><img src="img/preload1.jpg" alt=""></div>
@@ -27,7 +32,7 @@
         </div>
     </div>
 
-    <header class="header">
+    <header class="header" id="top">
         <div class="left">
 
             <h1>
@@ -48,17 +53,25 @@
                     </span>
                 </span>
 
-                <span id="toolTip">Discover in all 12 of South Africas official langages </span>
+                <span id="toolTip">Discover in all 12 of South Africa's official languages</span>
 
             </h1>
-            <nav aria-label="Main navigation">
+            <nav id="primary-navigation" aria-label="Main navigation">
                 <ul class="nav_links">
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">Destinations</a></li>
-                    <li><a href="#">Blog</a></li>
-                    <li><a href="#">About us</a></li>
+                    <li><a href="#top">Home</a></li>
+                    <li><a href="#destinations">Destinations</a></li>
+                    <li><a href="#how">How it works</a></li>
+                    <li><a href="#reviews">Reviews</a></li>
+                    <li><a href="#contact">Contact</a></li>
                 </ul>
             </nav>
+
+            <button class="menu-toggle" type="button" aria-controls="primary-navigation" aria-expanded="false"
+                aria-label="Open menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
         </div>
 
         <div class="right">
@@ -70,8 +83,10 @@
                             <path
                                 d="M9.5 3a6.5 6.5 0 0 1 5.17 10.44l5.44 5.45-1.42 1.41-5.44-5.44A6.5 6.5 0 1 1 9.5 3m0 2a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9z" />
                         </svg>
-                        <input type="search" id="searchQuery" name="q" placeholder="Search destinations"
-                            aria-label="Search destinations" required>
+                        <input type="search" id="searchQuery" name="q" placeholder="Search destinations" aria-label="Search 
+                        destinations" required>
+                        <div class="search-results" id="searchResults" role="listbox" aria-label="Search suggestions">
+                        </div>
                     </div>
                 </form>
                 <button class="search-icon-btn" aria-label="Search">
@@ -81,69 +96,72 @@
                     </svg>
                 </button>
             </div>
-            <a class="bookBtn" href="#">Book <span class="btn-full">now</span></a>
+            <a class="bookBtn" href="#contact">Book <span class="btn-full">now</span></a>
         </div>
     </header>
 
-    <main>
+    <main id="main-content">
         <section class="image-sandwich-container" aria-label="Wander South Africa travel hero">
             <div class="sandwich-heading-layer">
                 <h1 class="sandwich-text">Wander</h1>
                 <img class="sandwich-logo" src="img/logo.png" alt="" aria-hidden="true">
             </div>
 
-            <img src="img/subject.png" alt="Traveller exploring South Africa" class="subject-layer">
+            <img src="img/subject.png" alt="Traveller exploring South Africa" class="subject-layer" fetchpriority="high"
+                decoding="async">
 
             <div class="sandwich-front-text">
                 <p>Discover South Africa through culture, coastlines, and unforgettable local routes.</p>
                 <div class="hero-actions">
-                    <a class="hero-btn primary" href="#">Explore Tours</a>
-                    <a class="hero-btn secondary" href="#">Plan your trip</a>
+                    <a class="hero-btn primary" href="#destinations">Explore Tours</a>
+                    <a class="hero-btn secondary" href="#contact">Plan your trip</a>
                 </div>
             </div>
         </section>
-        <section class="features-section">
+        <section class="features-section" id="features">
             <div class="left-features">
                 <div class="info">
                     <h2>Why Thousands of Travelers Choose Wander.za for Their South Africa Adventures</h2>
-                    <p>From prisitine beaches to cultural hotspots, we make exploring South Africa easier, safer and
+                    <p>From pristine beaches to cultural hotspots, we make exploring South Africa easier, safer and
                         more
-                        exiciting with expert-crafted itineraries and round-the-clock support.</p>
+                        exciting with expert-crafted itineraries and round-the-clock support.</p>
                 </div>
                 <div class="stats">
-                    <div class="stat"><img src="img/smile.svg">
+                    <div class="stat"><img src="img/smile.svg" alt="Smiling face icon" loading="lazy">
                         <h3>12k</h3>
-                        <p>Happy and Satisfied Travlers</p>
+                        <p>Happy and Satisfied Travelers</p>
                     </div>
-                    <div class="stat"><img src="img/verified-check.svg">
+                    <div class="stat"><img src="img/verified-check.svg" alt="Verified check icon" loading="lazy">
                         <h3>10yr</h3>
                         <p>Proven Travel Industry Experience</p>
                     </div>
-                    <div class="stat"><img src="img/map-pin.svg">
+                    <div class="stat"><img src="img/map-pin.svg" alt="Map pin icon" loading="lazy">
                         <h3>50+</h3>
                         <p>South Africa Destinations Covered</p>
                     </div>
                 </div>
             </div>
             <div class="right-features">
-                <div class="card"><img src="img/map.svg">
+                <div class="card"><img src="img/map.svg" alt="Map icon" loading="lazy">
                     <h3>Local Expertise</h3>
-                    <p>Our South African travel experts craft unique experiences with insider knowledge you wont find in
+                    <p>Our South African travel experts craft unique experiences with insider knowledge you won't find
+                        in
                         typical tours</p>
                 </div>
-                <div class="card"><img src="img/calendar.svg">
+                <div class="card"><img src="img/calendar.svg" alt="Calendar icon" loading="lazy">
                     <h3>All-in-One Booking</h3>
-                    <p>Book everything in one place, easy, fast, and hassle free whether for quick getaways or planned
+                    <p>Book everything in one place, easy, fast, and hassle-free whether for quick getaways or planned
                         vacations</p>
                 </div>
-                <div class="card"><img src="img/headphones.svg">
+                <div class="card"><img src="img/headphones.svg" alt="Headphones icon" loading="lazy">
                     <h3>24/7 Support</h3>
-                    <p>We're here anytime, anywhere. Get real-time help anytime you need it before during or after your
+                    <p>We're here anytime, anywhere. Get real-time help anytime you need it before, during, or after
+                        your
                         trip</p>
                 </div>
             </div>
         </section>
-        <section class="destinations-section">
+        <section class="destinations-section" id="destinations">
             <div class="destinations-map-panel">
                 <div class="section-kicker">Explore by province</div>
                 <h2>Find your next South African escape</h2>
@@ -154,7 +172,7 @@
 
                 <div class="sa-map">
                     <div class="sa-map-inner">
-                        <img src="img/south-africa-map.png" alt="Map of South Africa">
+                        <img src="img/south-africa-map.png" alt="Map of South Africa" loading="lazy" decoding="async">
 
                         <div class="map-marker" aria-hidden="true">
                             <span></span>
@@ -196,7 +214,7 @@
                 <div class="destination-cards" id="destinationCards"></div>
             </div>
         </section>
-        <section class="how-section">
+        <section class="how-section" id="how">
             <div class="section-kicker">How it works</div>
 
             <div class="how-header">
@@ -224,7 +242,7 @@
                 </article>
             </div>
         </section>
-        <section class="reviews-section">
+        <section class="reviews-section" id="reviews">
             <div class="reviews-header">
                 <div>
                     <div class="section-kicker">Traveler stories</div>
@@ -270,7 +288,99 @@
                 </article>
             </div>
         </section>
+        <section class="contact-section" id="contact">
+            <div class="contact-copy">
+                <div class="section-kicker">Start planning</div>
+                <h2>Ready to build your South African escape?</h2>
+                <p>
+                    This demo form includes front-end validation and is structured so it can later connect to a
+                    backend, email service, or booking API.
+                </p>
+            </div>
+
+            <form class="trip-form" id="tripForm" novalidate>
+                <div class="form-row">
+                    <label for="travelerName">Name</label>
+                    <input id="travelerName" name="name" type="text" placeholder="Your name" required>
+                </div>
+
+                <div class="form-row">
+                    <label for="travelerEmail">Email</label>
+                    <input id="travelerEmail" name="email" type="email" placeholder="you@example.com" required>
+                </div>
+
+                <div class="form-row">
+                    <label for="travelerDestination">Destination</label>
+                    <select id="travelerDestination" name="destination" required>
+                        <option value="">Choose a destination</option>
+                        <option value="Cape Town">Cape Town</option>
+                        <option value="Garden Route">Garden Route</option>
+                        <option value="Durban">Durban</option>
+                        <option value="Drakensberg">Drakensberg</option>
+                        <option value="Kruger National Park">Kruger National Park</option>
+                        <option value="Johannesburg">Johannesburg</option>
+                    </select>
+                </div>
+
+                <div class="form-row form-row-full">
+                    <label for="travelerMessage">Trip notes</label>
+                    <textarea id="travelerMessage" name="message" rows="4"
+                        placeholder="Tell us what kind of trip you want."></textarea>
+                </div>
+
+                <button type="submit">Request trip plan</button>
+                <p class="form-status" id="formStatus" aria-live="polite"></p>
+            </form>
+        </section>
+
     </main>
+
+    <footer class="site-footer">
+        <div class="footer-main">
+            <div class="footer-brand">
+                <h2>Wander.za</h2>
+                <p>
+                    Curated South African travel experiences built around culture,
+                    coastlines, nature, and local discovery.
+                </p>
+            </div>
+
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h3>Explore</h3>
+                    <a href="#destinations">Destinations</a>
+                    <a href="#destinations">Popular trips</a>
+                    <a href="#how">Travel routes</a>
+                    <a href="#contact">Plan your trip</a>
+                </div>
+
+                <div class="footer-column">
+                    <h3>Company</h3>
+                    <a href="#features">About us</a>
+                    <a href="#reviews">Reviews</a>
+                    <a href="#how">Support</a>
+                    <a href="#contact">Contact</a>
+                </div>
+
+                <div class="footer-column">
+                    <h3>Contact</h3>
+                    <a href="mailto:hello@wanderza.com">hello@wanderza.com</a>
+                    <a href="tel:+27000000000">+27 00 000 0000</a>
+                    <span>South Africa</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 Wander.za. All rights reserved.</p>
+
+            <div class="footer-socials">
+                <a href="#" aria-label="Instagram">Instagram</a>
+                <a href="#" aria-label="TikTok">TikTok</a>
+                <a href="#" aria-label="LinkedIn">LinkedIn</a>
+            </div>
+        </div>
+    </footer>
 
     <script type="module" src="script.js"></script>
 </body>
