@@ -142,7 +142,6 @@ function setupIntroAnimation() {
         "<"
     );
 
-    // Preloader title appears
     tl.to(
         ".preloader-header .char",
         {
@@ -157,7 +156,6 @@ function setupIntroAnimation() {
         0.25
     );
 
-    // Counter appears and counts up
     tl.to(
         ".preloader-counter p",
         {
@@ -181,7 +179,6 @@ function setupIntroAnimation() {
         0.25
     );
 
-    // Counter leaves
     tl.to(
         ".preloader-counter p",
         {
@@ -192,7 +189,6 @@ function setupIntroAnimation() {
         1.75
     );
 
-    // Preloader title leaves
     tl.to(
         ".preloader-header .char",
         {
@@ -231,7 +227,6 @@ function setupIntroAnimation() {
         "<"
     );
 
-    // Preloader exits
     tl.to(
         ".preloader",
         {
@@ -251,7 +246,6 @@ function setupIntroAnimation() {
         2.7
     );
 
-    // Hero title appears after preloader is mostly gone
     tl.to(
         ".sandwich-text .char",
         {
@@ -299,11 +293,59 @@ function setupIntroAnimation() {
         3.15
     );
 
-    if (document.readyState === "complete" || document.readyState === "interactive") {
-        tl.play();
-    } else {
-        document.addEventListener("DOMContentLoaded", () => tl.play(), { once: true });
+    let introStarted = false;
+
+    function waitForPreloaderImages(maxWait = 800) {
+        const images = Array.from(document.querySelectorAll(".preloader-img img"));
+
+        const imagePromises = images.map((img) => {
+            if (img.complete) return Promise.resolve();
+
+            return new Promise((resolve) => {
+                img.addEventListener("load", resolve, { once: true });
+                img.addEventListener("error", resolve, { once: true });
+            });
+        });
+
+        const timeoutPromise = new Promise((resolve) => {
+            setTimeout(resolve, maxWait);
+        });
+
+        return Promise.race([
+            Promise.all(imagePromises),
+            timeoutPromise,
+        ]);
     }
+
+    function startIntroAnimation() {
+        if (introStarted) return;
+
+        introStarted = true;
+
+        waitForPreloaderImages().then(() => {
+            tl.play();
+        });
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", startIntroAnimation, { once: true });
+    } else {
+        startIntroAnimation();
+    }
+
+    setTimeout(() => {
+        if (!document.documentElement.classList.contains("site-ready")) {
+            document.documentElement.classList.add("site-ready");
+            document.body.classList.remove("is-loading");
+
+            const preloader = document.querySelector(".preloader");
+            if (preloader) {
+                preloader.style.display = "none";
+            }
+
+            console.warn("Preloader fallback triggered. Check for script or asset errors.");
+        }
+    }, 5000);
 }
 
 function setupMobileMenu() {
