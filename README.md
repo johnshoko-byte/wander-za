@@ -5,10 +5,7 @@ Wander.za is a responsive travel landing page concept for discovering curated So
 This project was built to demonstrate front-end UI development, responsive layout skills, animation timing, DOM interaction, accessibility awareness, and clean project presentation.
 
 ## Live Demo
-
-Add your deployed link here:
-
-```txt
+```
 https://wanderza.netlify.app/
 ```
 
