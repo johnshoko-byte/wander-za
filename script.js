@@ -26,6 +26,9 @@ const tripForm = document.querySelector("#tripForm");
 const formStatus = document.querySelector("#formStatus");
 const searchResults = document.querySelector("#searchResults");
 
+const PRELOADER_KEY = "app_has_loaded";
+const hasLoadedBefore = sessionStorage.getItem(PRELOADER_KEY);
+
 const splitText = (selector, type, className, mask = true) => {
     const element = document.querySelector(selector);
 
@@ -52,9 +55,19 @@ function finishPreloader() {
     }
 
     unlockPage();
+    sessionStorage.setItem(PRELOADER_KEY, "true");
 }
 
 function setupIntroAnimation() {
+    if (hasLoadedBefore) {
+        if (preloader) {
+            gsap.set(preloader, { display: "none" });
+        }
+        document.documentElement.classList.add("site-ready");
+        unlockPage();
+        return;
+    }
+
     lockPage();
 
     const preloaderHeaderSplit = splitText(".preloader-header h1", "chars", "char");
@@ -241,6 +254,7 @@ function setupIntroAnimation() {
                 });
 
                 document.body.classList.remove("is-loading");
+                sessionStorage.setItem(PRELOADER_KEY, "true"); // add this line
             },
         },
         2.7
